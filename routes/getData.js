@@ -28,6 +28,10 @@ app.get("/", async (req, res) => {
             `SELECT ${currencyType}, unixtimestamp FROM currencydata WHERE currencydata.unixtimestamp BETWEEN ? AND ?`,
             [startDate, endDate]
           );
+          await asyncMySQL(
+            `UPDATE apidata SET monthlycalls = monthlycalls + 1 WHERE Apikey = ?`,
+            [req.query.key]
+          );
           res.send(results);
         } catch (error) {
           res.send(error);
