@@ -20,14 +20,18 @@ app.get("/", async (req, res) => {
       [req.query.key]
     );
     if (apiCheck[0]) {
-      try {
-        const results = await asyncMySQL(
-          `SELECT ${currencyType}, unixtimestamp FROM currencydata WHERE currencydata.unixtimestamp BETWEEN ? AND ?`,
-          [startDate, endDate]
-        );
-        res.send(results);
-      } catch (error) {
-        res.send(error);
+      if (apiCheck[0].monthlycalls >= 1000) {
+        res.send("Monthly quota of API calls exceeded");
+      } else {
+        try {
+          const results = await asyncMySQL(
+            `SELECT ${currencyType}, unixtimestamp FROM currencydata WHERE currencydata.unixtimestamp BETWEEN ? AND ?`,
+            [startDate, endDate]
+          );
+          res.send(results);
+        } catch (error) {
+          res.send(error);
+        }
       }
     } else {
       res.send("API key not recognised");
